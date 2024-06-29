@@ -39,6 +39,7 @@ const NumberWithButtonFormat = React.forwardRef<
       allowLeadingZeros={false}
       decimalScale={isInteger ? 0 : 2}
       valueIsNumericString
+      inputMode="numeric"
       isAllowed={(values) => {
         const { floatValue } = values;
         return (
