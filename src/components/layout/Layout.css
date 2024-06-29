@@ -1,0 +1,15 @@
+.container {
+    background-color: #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content {
+    display: flex;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 56px;
+    gap: 30px;
+    flex-direction: column;
+}
