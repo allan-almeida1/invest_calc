@@ -32,8 +32,7 @@ const CurrencyFormat = React.forwardRef<
       // valueIsNumericString
       decimalScale={2}
       fixedDecimalScale
-      inputMode="numeric"
-      type="text"
+      inputMode="decimal"
     />
   );
 });
