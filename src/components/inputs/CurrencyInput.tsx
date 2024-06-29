@@ -36,20 +36,34 @@ const CurrencyFormat = React.forwardRef<
   );
 });
 
-export default function CurrencyInput() {
+interface CurrencyInputProps {
+  name: string;
+  label?: string;
+  onChange?: (value: number) => void;
+}
+
+const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
+  onChange,
+  label = "Some Label",
+  name,
+}) => {
   const [value, setValue] = React.useState<string | number>("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
+    const parsedValue =
+      event.target.value === "" ? 0 : parseFloat(event.target.value);
+    if (onChange) onChange(parsedValue);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <TextField
-        label="Investimento Inicial"
+        label={label}
         value={value}
         onChange={handleChange}
-        name="numberformat"
+        fullWidth
+        name={name}
         placeholder="0,00"
         id="formatted-numberformat-input"
         InputProps={{
@@ -60,4 +74,6 @@ export default function CurrencyInput() {
       />
     </ThemeProvider>
   );
-}
+};
+
+export default CurrencyInput;
