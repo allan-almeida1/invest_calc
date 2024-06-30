@@ -38,6 +38,8 @@ const NumberWithButtonFormat = React.forwardRef<
       decimalSeparator=","
       allowLeadingZeros={false}
       decimalScale={isInteger ? 0 : 2}
+      fixedDecimalScale={!isInteger}
+      suffix={isInteger ? "" : "%"}
       valueIsNumericString
       inputMode="decimal"
       isAllowed={(values) => {
@@ -105,7 +107,7 @@ const NumberButtonSelectInput: React.FunctionComponent<
         value={value}
         onChange={handleChange}
         variant="outlined"
-        placeholder={isInteger ? "0" : "0,00"}
+        placeholder={isInteger ? "0" : "0,00%"}
         InputProps={{
           inputComponent: NumberWithButtonFormat as any,
           inputProps: { isInteger },
@@ -150,8 +152,12 @@ const NumberButtonSelectInput: React.FunctionComponent<
                       sx={{ width: 100 }}
                       defaultValue={selectOptions[0]}
                     >
-                      {selectOptions.map((value, _) => {
-                        return <MenuItem value={value}>{value}</MenuItem>;
+                      {selectOptions.map((value, key) => {
+                        return (
+                          <MenuItem key={key} value={value}>
+                            {value}
+                          </MenuItem>
+                        );
                       })}
                     </Select>
                   ) : (
