@@ -32,6 +32,8 @@ export default function Investment() {
           ) : (
             <InvestmentForm cdi={cdiMonthly} />
           )}
+          <InvestmentForm cdi={0} />
+          <InvestmentForm cdi={0} />
         </Box>
       </Container>
     </Layout>
