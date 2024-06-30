@@ -7,7 +7,7 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "../ui/theme";
 
 export default function Investment() {
-  const { data, loading, error } = FetchCDI();
+  const { data, loading } = FetchCDI();
   const cdi = parseCDI(data?.valor);
   const cdiMonthly = rateDay2Month(cdi);
   console.log(cdiMonthly);
@@ -32,8 +32,6 @@ export default function Investment() {
           ) : (
             <InvestmentForm cdi={cdiMonthly} />
           )}
-          <InvestmentForm cdi={0} />
-          <InvestmentForm cdi={0} />
         </Box>
       </Container>
     </Layout>

@@ -2,6 +2,8 @@ import { Grid } from "@mui/material";
 import CurrencyInput from "../inputs/CurrencyInput";
 import NumberButtonSelectInput from "../inputs/NumberWithButtonsAndSelectInput";
 import RegularButton from "../buttons/RegularButton";
+import { useState } from "react";
+import { PeriodType, RateType } from "../../types/Types";
 
 interface InvestmentFormProps {
   onSubmit?: () => void;
@@ -9,6 +11,22 @@ interface InvestmentFormProps {
 }
 
 const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
+  const [initialInvestment, setInitialInvestment] = useState<number>(0);
+  const [monthlyContribution, setMonthlyContribution] = useState<number>(0);
+  const [period, setPeriod] = useState<number>(0);
+  const [periodType, setPeriodType] = useState<PeriodType>("M");
+  const [interestRate, setInterestRate] = useState<number>(0);
+  const [rateType, setRateType] = useState<RateType>(cdi > 0 ? "CDI" : "M");
+
+  const investmentInput = {
+    initialInvestment,
+    monthlyContribution,
+    period,
+    periodType,
+    interestRate,
+    rateType,
+  };
+
   const interestRateOptions = ["mensal", "anual"];
   if (cdi > 0) {
     interestRateOptions.push("% do CDI");
@@ -20,7 +38,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           name="initial-investment"
           label="Investimento Inicial"
           onChange={(value: number) => {
-            console.log(value);
+            setInitialInvestment(value);
           }}
         />
       </Grid>
@@ -30,7 +48,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           name="monthly-contribution"
           label="Aporte Mensal"
           onChange={(value: number) => {
-            console.log(value);
+            setMonthlyContribution(value);
           }}
         />
       </Grid>
@@ -42,7 +60,12 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           isInteger
           selectOptions={["meses", "anos"]}
           onChange={(value, selected) => {
-            console.log(value, selected);
+            if (selected === "meses") {
+              setPeriodType("M");
+            } else {
+              setPeriodType("Y");
+            }
+            setPeriod(value);
           }}
         />
       </Grid>
@@ -52,15 +75,30 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           name="interest-rate"
           label="Taxa de Juros"
           showButtons={false}
+          defaultSelected={cdi > 0 ? "last" : "first"}
           selectOptions={interestRateOptions}
           onChange={(value, selected) => {
-            console.log(value, selected);
+            if (selected === "mensal") {
+              setRateType("M");
+            } else if (selected === "anual") {
+              setRateType("Y");
+            } else {
+              setRateType("CDI");
+            }
+            setInterestRate(value);
           }}
         />
       </Grid>
 
       <Grid item xs={12}>
-        <RegularButton fullWidth>Calcular</RegularButton>
+        <RegularButton
+          fullWidth
+          onClick={() => {
+            console.log(investmentInput);
+          }}
+        >
+          Calcular
+        </RegularButton>
       </Grid>
     </Grid>
   );

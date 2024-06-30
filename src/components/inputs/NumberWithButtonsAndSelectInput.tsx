@@ -58,6 +58,7 @@ const NumberWithButtonFormat = React.forwardRef<
 interface NumberWithButtonInputProps {
   showSelect?: boolean;
   selectOptions?: string[];
+  defaultSelected?: "first" | "last";
   showButtons?: boolean;
   isInteger?: boolean;
   label?: string;
@@ -75,10 +76,15 @@ const NumberButtonSelectInput: React.FunctionComponent<
   name,
   isInteger,
   label = "Some Label",
+  defaultSelected = "first",
 }) => {
   const [value, setValue] = useState<string>("");
   const [selected, setSelected] = useState<string>(
-    selectOptions ? selectOptions[0] : ""
+    selectOptions
+      ? defaultSelected === "first"
+        ? selectOptions[0]
+        : selectOptions[selectOptions.length - 1]
+      : ""
   );
 
   const handleButtonClick = (button: "+" | "-") => {
@@ -150,7 +156,7 @@ const NumberButtonSelectInput: React.FunctionComponent<
                       }}
                       size="small"
                       sx={{ width: 100 }}
-                      defaultValue={selectOptions[0]}
+                      value={selected}
                     >
                       {selectOptions.map((value, key) => {
                         return (
