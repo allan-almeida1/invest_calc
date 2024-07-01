@@ -1,5 +1,5 @@
 import { NumericFormat, NumericFormatProps } from "react-number-format";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "@emotion/react";
 import theme from "../../ui/theme";
 import {
@@ -64,12 +64,18 @@ interface NumberWithButtonInputProps {
   label?: string;
   name: string;
   onChange?: (value: number, selected: string) => void;
+  onBlur?: () => void;
+  required?: boolean;
+  error?: boolean;
+  helperText?: string;
+  reset?: boolean;
 }
 
 const NumberButtonSelectInput: React.FunctionComponent<
   NumberWithButtonInputProps
 > = ({
   onChange,
+  onBlur,
   showButtons = true,
   showSelect = true,
   selectOptions = ["option 1", "option 2"],
@@ -77,6 +83,10 @@ const NumberButtonSelectInput: React.FunctionComponent<
   isInteger,
   label = "Some Label",
   defaultSelected = "first",
+  required = false,
+  error = false,
+  helperText = "",
+  reset = false,
 }) => {
   const [value, setValue] = useState<string>("");
   const [selected, setSelected] = useState<string>(
@@ -86,6 +96,12 @@ const NumberButtonSelectInput: React.FunctionComponent<
         : selectOptions[selectOptions.length - 1]
       : ""
   );
+
+  useEffect(() => {
+    if (reset) {
+      setValue("");
+    }
+  }, [reset]);
 
   const handleButtonClick = (button: "+" | "-") => {
     let parsedValue = value === "" ? 0 : parseInt(value);
@@ -110,9 +126,13 @@ const NumberButtonSelectInput: React.FunctionComponent<
         label={label}
         name={name}
         fullWidth
+        error={error}
+        helperText={helperText}
         value={value}
         onChange={handleChange}
+        onBlur={onBlur}
         variant="outlined"
+        required={required}
         placeholder={isInteger ? "0" : "0,00%"}
         InputProps={{
           inputComponent: NumberWithButtonFormat as any,

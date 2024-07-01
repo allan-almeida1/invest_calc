@@ -41,14 +41,24 @@ interface CurrencyInputProps {
   name: string;
   label?: string;
   onChange?: (value: number) => void;
+  required?: boolean;
+  reset?: boolean;
 }
 
 const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   onChange,
   label = "Some Label",
   name,
+  required = false,
+  reset = false,
 }) => {
   const [value, setValue] = React.useState<string | number>("");
+
+  React.useEffect(() => {
+    if (reset) {
+      setValue("");
+    }
+  }, [reset]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -64,6 +74,7 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
         value={value}
         onChange={handleChange}
         fullWidth
+        required={required}
         name={name}
         placeholder="0,00"
         id="formatted-numberformat-input"

@@ -2,29 +2,61 @@ import { Grid } from "@mui/material";
 import CurrencyInput from "../inputs/CurrencyInput";
 import NumberButtonSelectInput from "../inputs/NumberWithButtonsAndSelectInput";
 import RegularButton from "../buttons/RegularButton";
-import { useState } from "react";
-import { PeriodType, RateType } from "../../types/Types";
+import { useEffect, useState } from "react";
+import {
+  InvestmentInputs,
+  InvestmentOutputs,
+  PeriodType,
+  RateType,
+} from "../../types/Types";
+import { calculateInvestment } from "../../util/Formulas";
 
 interface InvestmentFormProps {
-  onSubmit?: () => void;
+  onSubmit?: (output: InvestmentOutputs) => void;
   cdi: number;
+  reset?: boolean;
 }
 
-const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
+const InvestmentForm: React.FC<InvestmentFormProps> = ({
+  onSubmit,
+  cdi,
+  reset = false,
+}) => {
   const [initialInvestment, setInitialInvestment] = useState<number>(0);
   const [monthlyContribution, setMonthlyContribution] = useState<number>(0);
   const [period, setPeriod] = useState<number>(0);
   const [periodType, setPeriodType] = useState<PeriodType>("M");
   const [interestRate, setInterestRate] = useState<number>(0);
   const [rateType, setRateType] = useState<RateType>(cdi > 0 ? "CDI" : "M");
+  const [buttonEnabled, setButtonEnabled] = useState<boolean>(false);
+  const [interestInputError, setInterestInputError] = useState<boolean>(false);
+  const [interestInputHelperText, setInterestInputHelperText] =
+    useState<string>("");
 
-  const investmentInput = {
+  const investmentInput: InvestmentInputs = {
     initialInvestment,
     monthlyContribution,
     period,
     periodType,
     interestRate,
     rateType,
+  };
+
+  useEffect(() => {
+    if (reset) {
+      setInterestInputError(false);
+      setInterestInputHelperText("");
+    }
+  }, [reset]);
+
+  const checkErrors = (rate: number) => {
+    setButtonEnabled(rate > 0);
+    if (!reset) {
+      setInterestInputError(rate === 0);
+      setInterestInputHelperText(
+        rate === 0 ? "A taxa de juros deve ser maior que zero" : ""
+      );
+    }
   };
 
   const interestRateOptions = ["mensal", "anual"];
@@ -37,6 +69,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
         <CurrencyInput
           name="initial-investment"
           label="Investimento Inicial"
+          reset={reset}
           onChange={(value: number) => {
             setInitialInvestment(value);
           }}
@@ -47,6 +80,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
         <CurrencyInput
           name="monthly-contribution"
           label="Aporte Mensal"
+          reset={reset}
           onChange={(value: number) => {
             setMonthlyContribution(value);
           }}
@@ -58,6 +92,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           name="period"
           label="Período de Aplicação"
           isInteger
+          reset={reset}
           selectOptions={["meses", "anos"]}
           onChange={(value, selected) => {
             if (selected === "meses") {
@@ -75,6 +110,10 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
           name="interest-rate"
           label="Taxa de Juros"
           showButtons={false}
+          reset={reset}
+          error={interestInputError}
+          helperText={interestInputHelperText}
+          required
           defaultSelected={cdi > 0 ? "last" : "first"}
           selectOptions={interestRateOptions}
           onChange={(value, selected) => {
@@ -85,7 +124,11 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
             } else {
               setRateType("CDI");
             }
-            setInterestRate(value);
+            setInterestRate(value / 100);
+            checkErrors(value);
+          }}
+          onBlur={() => {
+            checkErrors(interestRate);
           }}
         />
       </Grid>
@@ -93,8 +136,11 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({ onSubmit, cdi }) => {
       <Grid item xs={12}>
         <RegularButton
           fullWidth
+          disabled={!buttonEnabled}
           onClick={() => {
             console.log(investmentInput);
+            const outputs = calculateInvestment(investmentInput, cdi);
+            if (onSubmit) onSubmit(outputs);
           }}
         >
           Calcular
