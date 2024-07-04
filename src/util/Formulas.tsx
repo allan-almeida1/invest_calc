@@ -11,11 +11,13 @@ const calculateInvestment = (
   }
   //   Se a taxa de juros for anual, converta pra mensal
   if (input.rateType === "Y") {
-    input.interestRate = (1 + input.interestRate) ** (1 / input.period) - 1;
+    input.interestRate = (1 + input.interestRate) ** (1 / 12) - 1;
+    input.rateType = "M";
   }
   //   Se a taxa de juros for percentual do CDI, calcule o valor
   else if (input.rateType === "CDI") {
     input.interestRate = input.interestRate * cdi;
+    input.rateType = "M";
   }
 
   const FV =

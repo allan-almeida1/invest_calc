@@ -138,7 +138,7 @@ const InvestmentForm: React.FC<InvestmentFormProps> = ({
           fullWidth
           disabled={!buttonEnabled}
           onClick={() => {
-            console.log(investmentInput);
+            console.log(JSON.parse(JSON.stringify(investmentInput)));
             const outputs = calculateInvestment(investmentInput, cdi);
             if (onSubmit) onSubmit(outputs);
           }}

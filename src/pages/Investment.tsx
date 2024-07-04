@@ -51,6 +51,7 @@ export default function Investment() {
                   setInterval(() => {
                     setResetForm(false);
                   }, 5);
+                  window.location.reload();
                 }}
               >
                 <Refresh />
