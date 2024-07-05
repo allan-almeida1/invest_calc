@@ -8,15 +8,19 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { InvestmentOutputs } from "../../types/Types";
+
 import { formatToCurrency } from "../../util/Util";
 
+interface DataItem {
+  label: string;
+  value: number;
+}
 interface InvestmentResultsTableProps {
-  results: InvestmentOutputs;
+  data: DataItem[];
 }
 
 const InvestmentResultsTable: React.FC<InvestmentResultsTableProps> = ({
-  results,
+  data,
 }) => {
   return (
     <Grid container marginTop={2} marginBottom={3} spacing={2}>
@@ -27,26 +31,24 @@ const InvestmentResultsTable: React.FC<InvestmentResultsTableProps> = ({
         <TableContainer component={Paper}>
           <Table aria-label="investment-results-table">
             <TableBody>
-              <TableRow key="total-investment">
-                <TableCell sx={{ fontWeight: 700 }}>Total Investido</TableCell>
-                <TableCell sx={{ fontSize: "medium" }}>
-                  {formatToCurrency(results.totalInvestment)}
-                </TableCell>
-              </TableRow>
-              <TableRow key="total-interest">
-                <TableCell sx={{ fontWeight: 700 }}>
-                  Total ganho em juros
-                </TableCell>
-                <TableCell sx={{ fontSize: "medium" }}>
-                  {formatToCurrency(results.totalInterest)}
-                </TableCell>
-              </TableRow>
-              <TableRow key="final-amount">
-                <TableCell sx={{ fontWeight: 700 }}>Valor Final</TableCell>
-                <TableCell sx={{ fontSize: "large", fontWeight: 700 }}>
-                  {formatToCurrency(results.finalAmount)}
-                </TableCell>
-              </TableRow>
+              {data.map((value, index) => {
+                return (
+                  <TableRow key={value.label.replace(" ", "-").toLowerCase()}>
+                    <TableCell sx={{ fontWeight: 700 }}>
+                      {value.label}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontSize:
+                          index === data.length - 1 ? "large" : "medium",
+                        fontWeight: index === data.length - 1 ? 700 : 500,
+                      }}
+                    >
+                      {formatToCurrency(value.value)}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
