@@ -112,7 +112,7 @@ export default function Investment() {
                     cdi={cdiMonthly}
                     onSubmit={(values) => {
                       setProfitResults(values);
-                      console.log(values);
+                      setShowResults(true);
                     }}
                   />
                 )}
