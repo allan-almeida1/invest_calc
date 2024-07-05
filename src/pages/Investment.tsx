@@ -34,9 +34,17 @@ export default function Investment() {
       totalInvestment: 0,
     }
   );
-  const [profitOutputs, setProfitOutputs] = useState<ProfitOutputs>({
+  const investmentOutputs = [
+    { label: "Total Investido", value: investmentResults.totalInvestment },
+    { label: "Total ganho em juros", value: investmentResults.totalInterest },
+    { label: "Valor Final", value: investmentResults.finalAmount },
+  ];
+  const [profitResults, setProfitResults] = useState<ProfitOutputs>({
     necessaryAmount: 0,
   });
+  const profitOutputs = [
+    { label: "Investimento Necessário", value: profitResults.necessaryAmount },
+  ];
   const [resetForm, setResetForm] = useState<boolean>(false);
   console.log(cdiMonthly);
 
@@ -87,6 +95,7 @@ export default function Investment() {
                   tabNames={tabs}
                   onChange={(selectedTab) => {
                     setTab(selectedTab);
+                    setShowResults(false);
                   }}
                 />
                 {tab === 0 ? (
@@ -102,7 +111,7 @@ export default function Investment() {
                   <ProfitForm
                     cdi={cdiMonthly}
                     onSubmit={(values) => {
-                      setProfitOutputs(values);
+                      setProfitResults(values);
                       console.log(values);
                     }}
                   />
@@ -112,10 +121,10 @@ export default function Investment() {
           )}
 
           {showResults ? (
-            <InvestmentResultsTable results={investmentResults} />
+            <InvestmentResultsTable
+              data={tab === 0 ? investmentOutputs : profitOutputs}
+            />
           ) : (
-            // TODO: Check lifting state x State Management solution
-            // @See: https://stackoverflow.com/questions/75988949/how-to-keep-childrens-state-while-change-the-parent-component-tree-structure
             ""
           )}
         </Box>
