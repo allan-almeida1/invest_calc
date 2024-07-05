@@ -41,8 +41,11 @@ interface CurrencyInputProps {
   name: string;
   label?: string;
   onChange?: (value: number) => void;
+  onBlur?: () => void;
   required?: boolean;
   reset?: boolean;
+  helperText?: string;
+  error?: boolean;
 }
 
 const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
@@ -51,6 +54,9 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   name,
   required = false,
   reset = false,
+  onBlur,
+  helperText = "",
+  error = false,
 }) => {
   const [value, setValue] = React.useState<string | number>("");
 
@@ -74,7 +80,10 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
         value={value}
         onChange={handleChange}
         fullWidth
+        error={error}
+        helperText={helperText}
         required={required}
+        onBlur={onBlur}
         name={name}
         placeholder="0,00"
         id="formatted-numberformat-input"

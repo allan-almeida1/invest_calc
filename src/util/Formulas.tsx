@@ -1,4 +1,9 @@
-import { InvestmentInputs, InvestmentOutputs } from "../types/Types";
+import {
+  InvestmentInputs,
+  InvestmentOutputs,
+  ProfitInputs,
+  ProfitOutputs,
+} from "../types/Types";
 
 const calculateInvestment = (
   input: InvestmentInputs,
@@ -39,4 +44,18 @@ const calculateInvestment = (
   return output;
 };
 
-export { calculateInvestment };
+const calculateProfit = (input: ProfitInputs, cdi: number): ProfitOutputs => {
+  if (input.rateType === "Y") {
+    input.interestRate = (1 + input.interestRate) ** (1 / 12) - 1;
+    input.rateType = "M";
+  } else if (input.rateType === "CDI") {
+    input.interestRate = input.interestRate * cdi;
+    input.rateType = "CDI";
+  }
+  const output: ProfitOutputs = {
+    necessaryAmount: input.desiredIncome / input.interestRate,
+  };
+  return output;
+};
+
+export { calculateInvestment, calculateProfit };

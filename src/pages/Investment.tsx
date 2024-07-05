@@ -1,5 +1,7 @@
 import {
   Box,
+  Card,
+  CardContent,
   CircularProgress,
   Container,
   IconButton,
@@ -13,18 +15,27 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "../ui/theme";
 import { useState } from "react";
 import InvestmentResultsTable from "../components/tables/InvestmentResultsTable";
-import { InvestmentOutputs } from "../types/Types";
+import { InvestmentOutputs, ProfitOutputs } from "../types/Types";
 import { Refresh } from "@mui/icons-material";
+import FormTab from "../components/tabs/FormTab";
+import ProfitForm from "../components/forms/ProfitForm";
 
 export default function Investment() {
+  const tabs = ["poupar", "viver de renda"];
   const { data, loading } = FetchCDI();
   const cdi = parseCDI(data?.valor);
   const cdiMonthly = rateDay2Month(cdi);
+  const [tab, setTab] = useState(0);
   const [showResults, setShowResults] = useState<boolean>(false);
-  const [results, setResults] = useState<InvestmentOutputs>({
-    finalAmount: 0,
-    totalInterest: 0,
-    totalInvestment: 0,
+  const [investmentResults, setInvestmentResults] = useState<InvestmentOutputs>(
+    {
+      finalAmount: 0,
+      totalInterest: 0,
+      totalInvestment: 0,
+    }
+  );
+  const [profitOutputs, setProfitOutputs] = useState<ProfitOutputs>({
+    necessaryAmount: 0,
   });
   const [resetForm, setResetForm] = useState<boolean>(false);
   console.log(cdiMonthly);
@@ -42,7 +53,7 @@ export default function Investment() {
                 color="primary"
                 onClick={() => {
                   setShowResults(false);
-                  setResults({
+                  setInvestmentResults({
                     finalAmount: 0,
                     totalInterest: 0,
                     totalInvestment: 0,
@@ -70,17 +81,43 @@ export default function Investment() {
               </Box>
             </ThemeProvider>
           ) : (
-            <InvestmentForm
-              reset={resetForm}
-              onSubmit={(output) => {
-                setResults(output);
-                setShowResults(true);
-              }}
-              cdi={cdiMonthly}
-            />
+            <Card>
+              <CardContent>
+                <FormTab
+                  tabNames={tabs}
+                  onChange={(selectedTab) => {
+                    setTab(selectedTab);
+                  }}
+                />
+                {tab === 0 ? (
+                  <InvestmentForm
+                    reset={resetForm}
+                    onSubmit={(output) => {
+                      setInvestmentResults(output);
+                      setShowResults(true);
+                    }}
+                    cdi={cdiMonthly}
+                  />
+                ) : (
+                  <ProfitForm
+                    cdi={cdiMonthly}
+                    onSubmit={(values) => {
+                      setProfitOutputs(values);
+                      console.log(values);
+                    }}
+                  />
+                )}
+              </CardContent>
+            </Card>
           )}
 
-          {showResults ? <InvestmentResultsTable results={results} /> : ""}
+          {showResults ? (
+            <InvestmentResultsTable results={investmentResults} />
+          ) : (
+            // TODO: Check lifting state x State Management solution
+            // @See: https://stackoverflow.com/questions/75988949/how-to-keep-childrens-state-while-change-the-parent-component-tree-structure
+            ""
+          )}
         </Box>
       </Container>
     </Layout>

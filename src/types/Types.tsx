@@ -14,3 +14,13 @@ export type InvestmentOutputs = {
   finalAmount: number;
   totalInterest: number;
 };
+
+export type ProfitInputs = {
+  desiredIncome: number;
+  interestRate: number;
+  rateType: RateType;
+};
+
+export type ProfitOutputs = {
+  necessaryAmount: number;
+};
